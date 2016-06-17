@@ -4,7 +4,20 @@
   <groupId>com.slowteetoe</groupId>
   <artifactId>dropwizard-helloworld</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <scm>
+    <connection>scm:git:https://github.com/slowteetoe/dropwizard-helloworld.git</connection>
+  </scm>
   <build>
+    <resources>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/docker</directory>
+        <includes>
+          <include>Dockerfile</include>
+        </includes>
+      </resource>
+    </resources>
+    <finalName>helloworld</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -63,14 +76,26 @@
         <groupId>com.spotify</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <version>0.4.10</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
         <configuration>
-          <imageName>${docker.image.prefix}/${project.artifactId}:${git.commit.id.abbrev}</imageName>
+          <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+          <imageTags>
+            <imageTag>${git.commit.id.abbrev}</imageTag>
+            <imageTag>latest</imageTag>
+          </imageTags>
           <dockerDirectory>src/main/docker</dockerDirectory>
           <resources>
             <resource>
               <targetPath>/</targetPath>
               <directory>${project.build.directory}</directory>
-              <include>${project.build.finalName}.jar</include>
+              <include>${project.build.finalName}.${project.packaging}</include>
             </resource>
             <resource>
               <targetPath>/</targetPath>
@@ -93,6 +118,7 @@
         </executions>
         <configuration>
           <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+          <generateGitPropertiesFile>false</generateGitPropertiesFile>
           <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
           <format>properties</format>
         </configuration>

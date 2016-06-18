@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-oraclejdk8:slim
+FROM anapsix/alpine-java:8
 COPY helloworld.jar app.jar
 COPY hello-world.yml hello-world.yml
 RUN sh -c 'touch /app.jar'
